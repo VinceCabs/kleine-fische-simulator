@@ -1,4 +1,5 @@
 # -*-coding:utf8;-*-
+# TODO nouvelles regles : 1. poisson peche alors bateau avance 2. Fins de parties : 3 d'un cote ou 2 > match nul
 # TODO switch all to English
 # TODO plot # of turns distribution
 # TODO DocStrings
@@ -26,7 +27,7 @@ class Partie:
             "bleu": pos_poissons,
             "rose": pos_poissons,
             "orange": pos_poissons,
-            "gu": pos_poissons,
+            "jaune": pos_poissons,
         }
 
         self.mer = []
@@ -39,7 +40,7 @@ class Partie:
             couleur (str): couleur tiree au de
         """
 
-        d = ["bleu", "vert", "rouge", "rose", "orange", "gu"]
+        d = ["bleu", "vert", "rouge", "rose", "orange", "jaune"]
         couleur = random.choice(d)
         return couleur
 
