@@ -1,158 +1,165 @@
 # -*-coding:utf8;-*-
-# TODO nouvelles regles : 1. poisson peche alors bateau avance 2. Fins de parties : 3 d'un cote ou 2 > match nul
-# TODO switch all to English
 # TODO plot # of turns distribution
 # TODO DocStrings
 
 import random
 
-# Simulator params
-taille = 11  # standard board size
-pos_poissons = 6  # standard fish position
-nb_parties_simul = 10000  # nb of games to simulate
-
-
 # Simulator
-# TODO set those lists as Partie class attributes
-tours_win_pe = []
-tours_win_po = []
+won_turns_fish = []
+won_turns_fishermen = []
+draw_turns = []
+games_simul_num = 10000
+
+
+def main():
+    for _ in range(games_simul_num):
+        p = Partie()
+        p.play_game()
+    print_won_games(won_turns_fishermen, won_turns_fish, draw_turns)
 
 
 class Partie:
-    def __init__(self):
-        self.tour = 0
-        self.tranches = 0
-        self.pecheurs = {"rouge": 0, "vert": 0}
-        self.poissons = {
-            "bleu": pos_poissons,
-            "rose": pos_poissons,
-            "orange": pos_poissons,
-            "jaune": pos_poissons,
+    def __init__(self, board_size: int = 11, fish_position: int = 6):
+        self.board_size = board_size
+        self.fish_position = fish_position
+        self.turn = 0
+        self.slice = 0
+        self.fishermen = {"red", "green"}
+        self.fish = {
+            "blue": fish_position,
+            "rose": fish_position,
+            "orange": fish_position,
+            "yellow": fish_position,
         }
 
-        self.mer = []
-        self.bateau = []
+        self.sea = []
+        self.boat = []
 
-    def de(self) -> str:
-        """tir au de, renvoie une couleur
+    def roll_dice(self) -> str:
+        """rolls dice, returns a color
 
         Returns : 
-            couleur (str): couleur tiree au de
+            color (str): color shown on dice
         """
 
-        d = ["bleu", "vert", "rouge", "rose", "orange", "jaune"]
-        couleur = random.choice(d)
-        return couleur
+        colors = list(self.fishermen) + list(self.fish.keys())
+        color = random.choice(colors)
+        return color
 
-    def mouv_poisson(self, couleur: str):
-        """fait avancer un poisson de la couleur qu'on veut.
-        S'il arrive dans la mer, on l'ajoute à la liste mer.
-        S'il est déjà dans la mer, on fait avancer un autre poisson (appel d'une autre fonction) 
+    def move_fish(self, color: str):
+        """the fish of the color set in the parameter goes forward
+
+        If it reaches sea, it goes to the 'sea' list
+        If it is already in sea, another fish goes forward (other function call)
+        If it is in the boat fishermen goes forward
 
         Parameters :
-            couleur (str): couleur du poisson a faire avancer
+            color (str): color of the fish to go forward
 
         Returns : 
             null
         """
 
-        self.tour += 1
-        if couleur not in self.poissons:
-            self.mouv_poisson_alea()
-            # self.mouv_poisson_opt()
+        self.turn += 1
+        if color in self.sea:
+            # self.move_fish_rand()
+            self.move_fish_opt()
+        elif color in self.boat:
+            self.move_fishermen()
         else:
-            pos = self.poissons[couleur]
-            if pos < taille:
-                self.poissons[couleur] = pos + 1
+            pos = self.fish[color]
+            if pos < self.board_size:
+                self.fish[color] = pos + 1
             else:
-                self.mer.append(couleur)
-                self.poissons.pop(couleur)
+                self.sea.append(color)
+                self.fish.pop(color)
 
-    def mouv_poisson_alea(self):
+    def move_fish_rand(self):
         # fait avancer un poisson de manière aléatoire
-        poisson = random.choice(list(self.poissons))
-        self.mouv_poisson(poisson)
+        fish = random.choice(list(self.fish))
+        self.move_fish(fish)
 
-    def mouv_poisson_opt(self):
+    def move_fish_opt(self):
         # fait avancer le poisson le plus avancé (=le plus proche de la mer)
         max = 0
-        poisson_max = ""
-        for poisson in list(self.poissons.keys()):
-            if self.poissons[poisson] > max:
-                poisson_max = poisson
+        for fish in list(self.fish.keys()):
+            if self.fish[fish] > max:
+                fish_max = fish
 
-        self.mouv_poisson(poisson_max)
+        self.move_fish(fish_max)
 
-    def print_partie(self):
+    def print_game(self):
         print(
-            "{0}:     poissons:{1}    pecheurs:{2}    mer:{3}     bateau:{4}".format(
-                self.tour, self.poissons, self.tranches, self.mer, self.bateau
+            "{0}:     fishes:{1}    fishermen:{2}    sea:{3}     boat:{4}".format(
+                self.turn, self.fish, self.slice, self.sea, self.boat
             )
         )
 
-    def partie_finie(self) -> bool:
-        if len(self.mer) > 1:
-            # Poissons gagnent !
-            tours_win_po.append(self.tour)
+    def is_game_ended(self) -> bool:
+        if len(self.sea) > 2:
+            # Fishes win!
+            won_turns_fish.append(self.turn)
             return True
-        elif len(self.bateau) > 2:
-            # pêcheurs gagnent !
-            tours_win_pe.append(self.tour)
+        elif len(self.boat) > 2:
+            # Fishermen win!
+            won_turns_fishermen.append(self.turn)
+            return True
+        elif len(self.boat) == 2 and len(self.sea) == 2:
+            # Draw!
+            draw_turns.append(self.turn)
             return True
         else:
             return False
 
-    def mouv_pecheurs(self):
-        self.tour += 1
-        self.tranches += 1
+    def move_fishermen(self):
+        self.turn += 1
+        self.slice += 1
         # les poissons peches sont mis dans le bateau
-        for poisson in list(self.poissons.keys()):
-            if self.poissons[poisson] == self.tranches:
-                self.bateau.append(poisson)
-                del self.poissons[poisson]
+        for fish in list(self.fish.keys()):
+            if self.fish[fish] == self.slice:
+                self.boat.append(fish)
+                del self.fish[fish]
 
-    def lancer_de(self):
-        c = self.de()
-        if c in ["vert", "rouge"]:
-            self.mouv_pecheurs()
+    def play_turn(self):
+        c = self.roll_dice()
+        if c in ["green", "red"]:
+            self.move_fishermen()
         else:
-            self.mouv_poisson(c)
+            self.move_fish(c)
 
-    def jouer_partie(self):
+    def play_game(self):
         while True:
-            self.lancer_de()
-            if self.partie_finie():
+            self.play_turn()
+            if self.is_game_ended():
                 break
 
 
-def print_parties_gagnees(
-    parties_gagnees_poissons: list, parties_gagnees_pecheurs: list
-):
+def print_won_games(won_turns_fish: list, won_turns_fishermen: list, draw_turns: list):
 
-    nb_gagnees_poissons = len(parties_gagnees_poissons)
-    nb_gagnees_pecheurs = len(parties_gagnees_pecheurs)
+    wins_fish = len(won_turns_fish)
+    wins_fishermen = len(won_turns_fishermen)
+    draws = len(draw_turns)
     print(
-        "poissons: {0}    pecheurs: {1}    chance poissons: {2}".format(
-            nb_gagnees_poissons,
-            nb_gagnees_pecheurs,
-            nb_gagnees_poissons / (nb_gagnees_poissons + nb_gagnees_pecheurs),
+        "Fishes win: {0}    Fishermen win: {1}  Draws: {2}    Fishes/Fishermen chances: {3:.1f}%/{4:.1f}%".format(
+            wins_fish,
+            wins_fishermen,
+            draws,
+            100 * wins_fish / (wins_fish + wins_fishermen + draws),
+            100 * wins_fishermen / (wins_fish + wins_fishermen + draws),
         )
     )
-    print(
-        "nb tours moyen: {2}    nb tours moy poissons: {0}  nb tours moyen pecheurs: {1}".format(
-            sum(parties_gagnees_poissons) / nb_gagnees_poissons,
-            sum(parties_gagnees_pecheurs) / nb_gagnees_pecheurs,
-            (sum(parties_gagnees_poissons) + sum(parties_gagnees_pecheurs)) /
-            (nb_gagnees_poissons + nb_gagnees_pecheurs),
+    try:
+        print(
+            "avg turns number: {0:.1f}    (fishes win): {1:.1f}  (fishermen win): {2:.1f} (draw): {3:.1f}".format(
+                (sum(won_turns_fish) + sum(won_turns_fishermen))
+                / (wins_fish + wins_fishermen),
+                sum(won_turns_fish) / wins_fish,
+                sum(won_turns_fishermen) / wins_fishermen,
+                sum(draw_turns) / draws,
+            )
         )
-    )
-
-
-def main():
-    for _ in range(nb_parties_simul):
-        p = Partie()
-        p.jouer_partie()
-    print_parties_gagnees(tours_win_po, tours_win_pe)
+    except ZeroDivisionError:
+        pass
 
 
 if __name__ == "__main__":
