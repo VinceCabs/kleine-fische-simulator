@@ -1,8 +1,9 @@
-# "Tempo, Kleine Fische!" Simulator
+# "Tempo, Kleine Fische!" Simulator  
+![Build Status](https://travis-ci.com/VinceCabs/kleine-fische-simulator.svg?branch=master "Build status")
 
 Pretty simple simulator for the famous "Tempo, kleine Fische" board game.
 
-![alt text](./docs/img/kleine-fische-2.jpg "Tempo, klein Fische!")
+![Kleine Fische](./docs/img/kleine-fische-2.jpg "Tempo, klein Fische!")
 
 ## Some interesting learnings from the simulator
 
