@@ -93,7 +93,7 @@ class Partie:
             )
         )
 
-    def is_game_ended(self, stats: Stats) -> bool:
+    def is_game_ended(self, stats: 'Stats') -> bool:
         if len(self.sea) > 2:
             # Fishes win!
             stats.won_turns_fish.append(self.turn)
@@ -125,7 +125,7 @@ class Partie:
         else:
             self.move_fish(c)
 
-    def play_game(self, stats: Stats):
+    def play_game(self, stats: 'Stats'):
         while True:
             self.play_turn()
             if self.is_game_ended(stats):
