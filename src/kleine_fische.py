@@ -4,18 +4,16 @@
 
 import random
 
-# Simulator
-won_turns_fish = []
-won_turns_fishermen = []
-draw_turns = []
+# Param: Number of games to simulate
 games_simul_num = 10000
 
 
 def main():
+    s = Stats()
     for _ in range(games_simul_num):
         p = Partie()
-        p.play_game()
-    print_won_games(won_turns_fishermen, won_turns_fish, draw_turns)
+        p.play_game(s)
+    s.print_won_games()
 
 
 class Partie:
@@ -95,18 +93,18 @@ class Partie:
             )
         )
 
-    def is_game_ended(self) -> bool:
+    def is_game_ended(self, stats: Stats) -> bool:
         if len(self.sea) > 2:
             # Fishes win!
-            won_turns_fish.append(self.turn)
+            stats.won_turns_fish.append(self.turn)
             return True
         elif len(self.boat) > 2:
             # Fishermen win!
-            won_turns_fishermen.append(self.turn)
+            stats.won_turns_fishermen.append(self.turn)
             return True
         elif len(self.boat) == 2 and len(self.sea) == 2:
             # Draw!
-            draw_turns.append(self.turn)
+            stats.draw_turns.append(self.turn)
             return True
         else:
             return False
@@ -127,39 +125,50 @@ class Partie:
         else:
             self.move_fish(c)
 
-    def play_game(self):
+    def play_game(self, stats: Stats):
         while True:
             self.play_turn()
-            if self.is_game_ended():
+            if self.is_game_ended(stats):
                 break
 
 
-def print_won_games(won_turns_fish: list, won_turns_fishermen: list, draw_turns: list):
+class Stats:
+    def __init__(self):
+        self.won_turns_fish = []
+        self.won_turns_fishermen = []
+        self.draw_turns = []
 
-    wins_fish = len(won_turns_fish)
-    wins_fishermen = len(won_turns_fishermen)
-    draws = len(draw_turns)
-    print(
-        "Fishes win: {0}    Fishermen win: {1}  Draws: {2}    Fishes/Fishermen chances: {3:.1f}%/{4:.1f}%".format(
-            wins_fish,
-            wins_fishermen,
-            draws,
-            100 * wins_fish / (wins_fish + wins_fishermen + draws),
-            100 * wins_fishermen / (wins_fish + wins_fishermen + draws),
-        )
-    )
-    try:
+    def print_won_games(self):
+
+        wins_fish = len(self.won_turns_fish)
+        wins_fishermen = len(self.won_turns_fishermen)
+        draws = len(self.draw_turns)
         print(
-            "avg turns number: {0:.1f}    (fishes win): {1:.1f}  (fishermen win): {2:.1f} (draw): {3:.1f}".format(
-                (sum(won_turns_fish) + sum(won_turns_fishermen))
-                / (wins_fish + wins_fishermen),
-                sum(won_turns_fish) / wins_fish,
-                sum(won_turns_fishermen) / wins_fishermen,
-                sum(draw_turns) / draws,
+            "Fishes win: {0}    Fishermen win: {1}  Draws: {2}    Fishes/Fishermen chances: {3:.1f}%/{4:.1f}%".format(
+                wins_fish,
+                wins_fishermen,
+                draws,
+                100 * wins_fish / (wins_fish + wins_fishermen + draws),
+                100 * wins_fishermen / (wins_fish + wins_fishermen + draws),
             )
         )
-    except ZeroDivisionError:
-        pass
+
+    def print_avg_turns(self):
+        wins_fish = len(self.won_turns_fish)
+        wins_fishermen = len(self.won_turns_fishermen)
+        draws = len(self.draw_turns)
+        try:
+            print(
+                "avg turns number: {0:.1f}    (fishes win): {1:.1f}  (fishermen win): {2:.1f} (draw): {3:.1f}".format(
+                    (sum(self.won_turns_fish) + sum(self.won_turns_fishermen))
+                    / (wins_fish + wins_fishermen),
+                    sum(self.won_turns_fish) / wins_fish,
+                    sum(self.won_turns_fishermen) / wins_fishermen,
+                    sum(self.draw_turns) / draws,
+                )
+            )
+        except ZeroDivisionError:
+            pass
 
 
 if __name__ == "__main__":
