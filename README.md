@@ -12,9 +12,9 @@ Pretty simple simulator for the famous "Tempo, kleine Fische" board game.
 
 If we simulate a great number of games, we can get some interesting stats:
 
-* you should **always take the fish team**, they have 50.4% chance to win!
+* you should **always take the fishermen team**, they have 50.4% chance to win!
 * an average game lasts **22.9 turns**
-* fishermen have 25.9% chance to win,  23.7% chance to have draw game
+* fishes have 25.9% chance to win,  23.7% chance to have draw game
 
 ## Running
 
