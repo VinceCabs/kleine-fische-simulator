@@ -41,7 +41,12 @@ class Partie:
             color (str): color shown on dice
         """
 
-        colors = list(self.fishermen) + list(self.fish.keys())
+        colors = list(self.fishermen) + [
+            "blue",
+            "rose",
+            "orange",
+            "yellow",
+        ]  # TODO factorize fish colors
         color = random.choice(colors)
         return color
 
