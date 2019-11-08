@@ -5,5 +5,6 @@ before_install:
   - pip install -U pytest
 install:
   - pip install . # install package + test dependencies
-script: python tests/test_kleine_fische.py # run tests
+script: 
+  - pytest # run tests
 #https://towardsdatascience.com/extensive-python-testing-on-travis-ci-4c24db9bf961
