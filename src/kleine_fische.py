@@ -146,18 +146,33 @@ class Stats:
 
     def print_won_games(self):
 
+        print(
+            "Fishes win: {0}    Fishermen win: {1}  Draws: {2}    Fishes/Fishermen chances: {3:.1f}%/{4:.1f}%".format(
+                len(self.won_turns_fish),
+                len(self.won_turns_fishermen),
+                len(self.draw_turns),
+                100 * self.get_proba_fish(),
+                100 * self.get_proba_fishermen(),
+            )
+        )
+
+    def get_proba_fish(self) -> float:
         wins_fish = len(self.won_turns_fish)
         wins_fishermen = len(self.won_turns_fishermen)
         draws = len(self.draw_turns)
-        print(
-            "Fishes win: {0}    Fishermen win: {1}  Draws: {2}    Fishes/Fishermen chances: {3:.1f}%/{4:.1f}%".format(
-                wins_fish,
-                wins_fishermen,
-                draws,
-                100 * wins_fish / (wins_fish + wins_fishermen + draws),
-                100 * wins_fishermen / (wins_fish + wins_fishermen + draws),
-            )
-        )
+        return wins_fish / (wins_fish + wins_fishermen + draws)
+
+    def get_proba_fishermen(self) -> float:
+        wins_fish = len(self.won_turns_fish)
+        wins_fishermen = len(self.won_turns_fishermen)
+        draws = len(self.draw_turns)
+        return wins_fishermen / (wins_fish + wins_fishermen + draws)
+
+    def get_proba_draw(self) -> float:
+        wins_fish = len(self.won_turns_fish)
+        wins_fishermen = len(self.won_turns_fishermen)
+        draws = len(self.draw_turns)
+        return draws / (wins_fish + wins_fishermen + draws)
 
     def print_avg_turns(self):
         wins_fish = len(self.won_turns_fish)
