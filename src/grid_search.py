@@ -3,7 +3,7 @@ import itertools
 import numpy as np
 import matplotlib.pyplot as plt
 
-games_simul_num = 100000
+games_simul_num = 10000
 max_board_size = 13
 
 
@@ -31,19 +31,19 @@ def grid_search():
         else:
             pass
 
-    # saving results on files (NPY for future plotting, CSV to import somewhere else)
-    np.save("fish", fish_proba)
-    np.save("fishermen", fishermen_proba)
+    # saving results on files (.NPY for future plotting, .CSV to import somewhere else)
+    np.save("./artefacts/fish", fish_proba)
+    np.save("./artefacts/fishermen", fishermen_proba)
 
-    np.savetxt("fish.csv", fish_proba, delimiter=";")
-    np.savetxt("fishermen.csv", fishermen_proba, delimiter=";")
+    np.savetxt("./artefacts/fish.csv", fish_proba, delimiter=";")
+    np.savetxt("./artefacts/fishermen.csv", fishermen_proba, delimiter=";")
 
 
 def plot_results():
 
     # loading results from grid search
-    fish = np.load("fish.npy")
-    fishermen = np.load("fishermen.npy")
+    fish = np.load("./artefacts/fish.npy")
+    fishermen = np.load("./artefacts/fishermen.npy")
 
     # probab. delta between fish and fishermen (we look for near 0 delta)
     delta = fish - fishermen
@@ -54,14 +54,16 @@ def plot_results():
     print("delta: \n", delta)
 
     # graphical display
+    # TODO : better display : https://matplotlib.org/3.1.1/gallery/images_contours_and_fields/image_annotated_heatmap.html#sphx-glr-gallery-images-contours-and-fields-image-annotated-heatmap-py
     fig = plt.figure()
     fig.add_subplot(1, 2, 1).title.set_text("fish win probability")
     fig.add_subplot(1, 2, 1)
 
     plt.imshow(fish)
-    fig.add_subplot(1, 2, 2).title.set_text("delta (fish-fishermen)")
+    fig.add_subplot(1, 2, 2).title.set_text("delta (fish vs fishermen)")
     plt.imshow(delta)
     plt.show()
+    plt.legend()
 
 
 if __name__ == "__main__":
