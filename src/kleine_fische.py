@@ -3,6 +3,7 @@
 # TODO DocStrings
 
 import random
+from tqdm import tqdm
 
 # Param: Number of games to simulate
 games_simul_num = 10000
@@ -10,7 +11,7 @@ games_simul_num = 10000
 
 def main():
     s = Stats()
-    for _ in range(games_simul_num):
+    for _ in tqdm(range(games_simul_num)):
         p = Partie()
         p.play_game(s)
     s.print_won_games()

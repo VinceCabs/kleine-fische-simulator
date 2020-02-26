@@ -2,6 +2,7 @@ import src.kleine_fische as kf
 import itertools
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 games_simul_num = 10000
 max_board_size = 13
@@ -23,7 +24,7 @@ def grid_search():
         if board >= fish:
             print("computing {0}:{1}".format(board, fish))
             s = kf.Stats()
-            for _ in range(games_simul_num):
+            for _ in tqdm(range(games_simul_num)):
                 p = kf.Partie(board, fish)
                 p.play_game(s)
             fish_proba[board - 1][fish - 1] = s.get_proba_fish()
